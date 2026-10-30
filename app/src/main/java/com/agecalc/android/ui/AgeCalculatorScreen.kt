@@ -1,6 +1,5 @@
 package com.agecalc.android.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -103,19 +102,16 @@ fun AgeCalculatorScreen(
     onCloseAboutDeveloper: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (uiState.isAboutDeveloperVisible) {
-        BackHandler(onBack = onCloseAboutDeveloper)
-        AboutDeveloperScreen(
-            onBack = onCloseAboutDeveloper,
-            modifier = modifier
-        )
-        return
-    }
-
     val theme = LocalAppThemeColors.current
 
     val selectedTodayUtcMillis = remember(uiState.todayDate) {
         AgeCalculatorEngine.localDateToUtcMillis(uiState.todayDate)
+    }
+
+    if (uiState.isAboutDeveloperVisible) {
+        AboutDeveloperSheet(
+            onDismiss = onCloseAboutDeveloper
+        )
     }
 
     if (uiState.isThemeSheetVisible) {
@@ -308,7 +304,11 @@ fun AgeCalculatorScreen(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = theme.textSecondary,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(role = Role.Button, onClick = onOpenAboutDeveloper)
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 )
             }
         }
